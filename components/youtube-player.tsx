@@ -91,7 +91,7 @@ const YoutubePlayer: React.FC = () => {
     //{"url":"https://www.youtube.com/watch?v=zjkBMFhNj_g", "max_questions":1}
     axios
       .post(
-        "https://lumieres-backend.onrender.com/demo/create_questions",
+        "https://lumieres-backend.onrender.com/create_questions",
         {
           url: mainVideoUrl,
           max_questions: 1,
@@ -401,9 +401,11 @@ const YoutubePlayer: React.FC = () => {
           );
         })}
       </div>
+      <div className="flex flex-row gap-4 w-full justify-center items-center">
       {questions.map((item, index) => (
-            <span key={index} onClick={()=>{playerRef.current.seekTo(item.timestamp-3)}}>{item.timestamp}</span>
+            <Button key={index} onClick={()=>{playerRef.current.seekTo(item.timestamp-3)}}>{item.timestamp}</Button>
         ))}
+      </div>
       <div className="absolute top-2 left-0 -mt-16 -ml-16 w-40 h-40 bg-red-500 rounded-full opacity-50 shadow-lg"></div>
       <div className="absolute top-2 left-16 -mt-10 w-20 h-20 bg-orange-400 rounded-full opacity-50 shadow-lg"></div>
       <div className="absolute top-5 left-14 -mt-2 -ml-2 w-20 h-20 bg-yellow-400 rounded-full opacity-50 shadow-lg"></div>
