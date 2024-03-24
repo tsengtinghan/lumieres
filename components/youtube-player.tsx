@@ -60,7 +60,7 @@ const YoutubePlayer: React.FC = () => {
       max_questions: 1,
     }).then((response) => {
       console.log(response);
-      setQuestions(response.data.questions);
+      setQuestions(questionList); // change back to response.data.questions
       setLoadingState("questions_loaded");
     }).catch((error) => {
       console.log(error);
@@ -68,9 +68,9 @@ const YoutubePlayer: React.FC = () => {
     });
   }
   
-  useEffect(() => {
-    setQuestions(questionList);
-  }, []);
+//   useEffect(() => {
+//     setQuestions(questionList);
+//   }, []);
 
   const findClosestQuestion = (currentTime: number) => {
     return questions.findIndex((question) => question.timestamp >= currentTime);
@@ -162,7 +162,6 @@ const YoutubePlayer: React.FC = () => {
 
   return (
     <>
-      <h1>YouTube Player</h1>
       <div>
         {loadingState == "questions_loaded" && youtubeComponent}
         {showQuestion && (
