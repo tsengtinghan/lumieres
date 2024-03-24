@@ -288,10 +288,10 @@ const YoutubePlayer: React.FC = () => {
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center gap-4 p-2  bg-orange-100 overflow-visible ">
       <div className="w-[100%] bg-white max-w-screen-lg shadow-2xl rounded-2xl aspect-[16/9] m-12 mb-16 flex">
-        <div className={"w-full h-full bg-white " + (loadingState === "questions_loaded" && !showQuestion  ? 'z-0' : 'z-20' )} >
+        <div className={"w-full h-full bg-white z-0"} >
           {mainComponent}
         </div>
-        <div className="w-full h-full ml-[-100%] z-10">
+        <div className={"w-full h-full ml-[-100%] z-10 " + (loadingState === "questions_loaded" && !showQuestion  ? 'visible' : 'invisible' )}>
           <YouTube
           videoId={getIdfromUrl(mainVideoUrl) as string} // video id
           opts={opts}
@@ -299,7 +299,7 @@ const YoutubePlayer: React.FC = () => {
           />
         </div>
       </div>
-      <div className="w-full max-w-lg flex justify-between items-center relative -top-12 gap-4 bg-black rounded-3xl p-2">
+      <div className={"w-full max-w-lg flex justify-between items-center relative -top-12 gap-4 bg-black rounded-3xl p-2 " + ( loadingState === "waiting_for_url" ? 'visible' : 'invisible' )}>
         <Label className="sr-only" htmlFor="input-field">
           Input Field
         </Label>
