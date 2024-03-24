@@ -55,7 +55,8 @@ const YoutubePlayer: React.FC = () => {
     width: "100%",
     height: "570px",
     borderRadius: "2rem",
-    playerVars: { autoplay: 1 },
+    start: 0,
+    //playerVars: { autoplay: 1 },
   };
 
   const questionList: QuestionList[] = test;
@@ -75,6 +76,7 @@ const YoutubePlayer: React.FC = () => {
         console.log(response);
         setQuestions(response.data.questions); // change back to response.data.questions
         setLoadingState("questions_loaded");
+        playerRef.current.playVideo();
       })
       .catch((error) => {
         console.log(error);
@@ -164,8 +166,9 @@ const YoutubePlayer: React.FC = () => {
     console.log(lastVideo.current);
     if(lastVideo.current){
         setShowQuestion(false);
-        playerRef.current.playVideo();
+        setSelectedOption("")
         lastVideo.current = false;
+        playerRef.current.playVideo();
     }
   }
 
