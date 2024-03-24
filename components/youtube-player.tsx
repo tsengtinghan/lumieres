@@ -35,7 +35,6 @@ const YoutubePlayer: React.FC = () => {
   const [isInitialScreen, setIsInitialScreen] = useState(true);
   const [videoUrl, setVideoUrl] = useState<string>("");
   const playerRef = useRef<any>(null);
-  const [videoUrl, setVideoUrl] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
 
   const opts = {
