@@ -96,7 +96,7 @@ const YoutubePlayer: React.FC = () => {
         //"http://127.0.0.1:8000/create_questions",
         {
           url: url,
-          max_questions: 1,
+          max_questions: 2,
         },
         { timeout: 600000 }
       )
@@ -229,7 +229,7 @@ const YoutubePlayer: React.FC = () => {
                     key={index}
                     onClick={() => handleClick(item)}
                     variant="destructive"
-                    className="!text-left justify-start text-lg h-16"
+                    className="!text-left justify-start text-lg h-16 overflow-hidden text-overflow-ellipsis whitespace-nowrap"
                   >
                     {item}
                   </Button>
@@ -243,7 +243,7 @@ const YoutubePlayer: React.FC = () => {
                     key={index}
                     onClick={() => handleClick(item)}
                     variant="secondary"
-                    className="!text-left justify-start text-lg h-16"
+                    className="!text-left justify-start text-lg h-16 overflow-hidden text-overflow-ellipsis whitespace-nowrap"
                   >
                     {item}
                   </Button>
@@ -254,7 +254,7 @@ const YoutubePlayer: React.FC = () => {
                   key={index}
                   onClick={() => handleClick(item)}
                   variant="outline"
-                  className="!text-left justify-start text-lg h-16"
+                  className="!text-left justify-start text-lg h-16 overflow-hidden text-overflow-ellipsis whitespace-nowrap"
                 >
                   {item}
                 </Button>
