@@ -21,9 +21,9 @@ interface QuestionList {
   question: Question;
 }
 
-function getIdfromUrl(url: string) {
-  const urlParams = new URLSearchParams(url);
-  return urlParams.get("v");
+function getIdfromUrl(url: string) : string | null{
+  const urlParams = new URLSearchParams(url.split('?')[1]);
+  return urlParams.get('v');
 }
 
 type ButtonVariant = "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
@@ -46,7 +46,7 @@ const YoutubePlayer: React.FC = () => {
   const questionList: QuestionList[] = test;
 
   const startVideo = () => {
-    playerRef.current.playVideo();
+    setIsInitialScreen(false);
   }
   
   useEffect(() => {
@@ -83,6 +83,9 @@ const YoutubePlayer: React.FC = () => {
     }, 500);
     return () => clearInterval(intervalId);
   };
+  
+  
+  
 
   useEffect(() => {
     if (showQuestion) {
@@ -111,27 +114,35 @@ const YoutubePlayer: React.FC = () => {
       <Button onClick={() => setIsInitialScreen(false)}>Start</Button>
     </div>
   );
+  
+  
+  console.log(getIdfromUrl(videoUrl));
+  console.log(videoUrl);
+  const youtubeComponent = (
+    <div
+    style={{
+      maxWidth: "800px",
+      margin: "auto",
+      marginTop: "12px",
+      minHeight: "30vh",
+      borderRadius: "12px",
+      overflow: "hidden",
+    }}
+  >
+    
+    <YouTube
+      videoId={getIdfromUrl(videoUrl) as string} // video id
+      opts={opts}
+      onStateChange={videoStateChange}
+    />
+  </div>
+  );
 
   return (
     <>
       <h1>YouTube Player</h1>
       <div>
-        <div
-          style={{
-            maxWidth: "800px",
-            margin: "auto",
-            marginTop: "12px",
-            minHeight: "30vh",
-            borderRadius: "12px",
-            overflow: "hidden",
-          }}
-        >
-          <YouTube
-            videoId="zjkBMFhNj_g" // video id
-            opts={opts}
-            onStateChange={videoStateChange}
-          />
-        </div>
+        {!isInitialScreen && youtubeComponent}
         {showQuestion && (
           <div className="flex mx-auto">
             <p>Question: {questions[currentQuestionIndex].question.question}</p>
