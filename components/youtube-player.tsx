@@ -60,6 +60,7 @@ const YoutubePlayer: React.FC = () => {
   useEffect(() => {
     fetch(
       "https://raw.githubusercontent.com/ShinnosukeUesaka/lumieres_backend/main/cached_generations.json"
+      , {cache: "no-store"}
     )
       .then((response) => response.json())
       .then((data: { cached_generations: CachedGeneration[] }) => {
@@ -285,7 +286,7 @@ const YoutubePlayer: React.FC = () => {
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center gap-4 p-2  bg-orange-100 overflow-visible ">
-      <div className="w-[100%] bg-white max-w-screen-lg shadow-2xl rounded-2xl aspect-[16/9] m-12 mb-16 flex">
+      <div className="w-[100%] bg-white max-w-screen-lg shadow-2xl rounded-2xl aspect-[16/9] m-12 mb-10 flex">
         <div className={"w-full h-full bg-white z-0"}>{mainComponent}</div>
         <div
           className={
@@ -303,25 +304,12 @@ const YoutubePlayer: React.FC = () => {
         </div>
       </div>
       <div
-        className={"flex flex-col" + (loadingState === "waiting_for_url" ? "visible" : "invisible")}
+        className={"flex flex-col w-full items-center " + (loadingState === "waiting_for_url" ? "visible" : "invisible")}
       >
-        {cached_urls.map((item) => {
-          return (
-            <Button
-              onClick={() => {
-                setMainVideoUrl(item.url);
-                startVideo();
-              }}
-              className="rounded-3xl"
-              variant={"outline"}
-            >
-              {item.title}
-            </Button>
-          );
-        })}
+        
         <div
           className={
-            "w-full max-w-lg flex justify-between items-center relative -top-12 gap-4 bg-black rounded-3xl p-2 " +
+            "w-full max-w-lg flex justify-between items-center relative  gap-4 bg-black rounded-3xl p-2 min-h-24" +
             (loadingState === "waiting_for_url" ? "visible" : "invisible")
           }
         >
@@ -354,6 +342,21 @@ const YoutubePlayer: React.FC = () => {
             </svg>
           </Button>
         </div>
+        
+        {cached_urls.map((item) => {
+          return (
+            <Button
+              onClick={() => {
+                setMainVideoUrl(item.url);
+                startVideo();
+              }}
+              className="rounded-3xl m-3"
+              variant={"outline"}
+            >
+              {item.title}
+            </Button>
+          );
+        })}
       </div>
       <div className="absolute top-2 left-0 -mt-16 -ml-16 w-40 h-40 bg-red-500 rounded-full opacity-50 shadow-lg"></div>
       <div className="absolute top-2 left-16 -mt-10 w-20 h-20 bg-orange-400 rounded-full opacity-50 shadow-lg"></div>
