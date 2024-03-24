@@ -62,7 +62,7 @@ const YoutubePlayer: React.FC = () => {
         setShowQuestion(true);
         clearInterval(intervalId);
       }
-    }, 1000);
+    }, 100);
 
     // clean up the interval
     return () => clearInterval(intervalId);
@@ -76,7 +76,6 @@ const YoutubePlayer: React.FC = () => {
 
   const handleClick = () => {
     setShowQuestion(false);
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
     playerRef.current.playVideo();
   };
 
