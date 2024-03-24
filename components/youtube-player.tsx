@@ -353,6 +353,7 @@ const YoutubePlayer: React.FC = () => {
         {cached_urls.map((item) => {
           return (
             <Button
+              key={item.url}
               onClick={() => {
                 setMainVideoUrl(item.url);
                 startVideo();
@@ -366,7 +367,7 @@ const YoutubePlayer: React.FC = () => {
         })}
       </div>
       {questions.map((item, index) => (
-            <span onClick={()=>{playerRef.current.seekTo(item.timestamp-3)}}>{item.timestamp}</span>
+            <span key={index} onClick={()=>{playerRef.current.seekTo(item.timestamp-3)}}>{item.timestamp}</span>
         ))}
       <div className="absolute top-2 left-0 -mt-16 -ml-16 w-40 h-40 bg-red-500 rounded-full opacity-50 shadow-lg"></div>
       <div className="absolute top-2 left-16 -mt-10 w-20 h-20 bg-orange-400 rounded-full opacity-50 shadow-lg"></div>
