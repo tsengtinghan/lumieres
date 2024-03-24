@@ -2,7 +2,9 @@ import React, { useEffect, useState, useRef, use } from "react";
 import YouTube, { YouTubeProps } from "react-youtube";
 import test from "@/public/test.json";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import Video from "./ui/video";
+import { start } from "repl";
 
 interface Question {
   type: string;
@@ -19,12 +21,19 @@ interface QuestionList {
   question: Question;
 }
 
+function getIdfromUrl(url: string) {
+  const urlParams = new URLSearchParams(url);
+  return urlParams.get("v");
+}
+
 type ButtonVariant = "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
 
 const YoutubePlayer: React.FC = () => {
   const [questions, setQuestions] = useState<QuestionList[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showQuestion, setShowQuestion] = useState(false);
+  const [isInitialScreen, setIsInitialScreen] = useState(true);
+  const [videoUrl, setVideoUrl] = useState<string>("");
   const playerRef = useRef<any>(null);
   const [videoUrl, setVideoUrl] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
@@ -37,6 +46,10 @@ const YoutubePlayer: React.FC = () => {
 
   const questionList: QuestionList[] = test;
 
+  const startVideo = () => {
+    playerRef.current.playVideo();
+  }
+  
   useEffect(() => {
     setQuestions(questionList);
   }, []);
@@ -91,6 +104,14 @@ const YoutubePlayer: React.FC = () => {
     // setShowQuestion(false);
     // playerRef.current.playVideo();
   };
+  
+  const initialScreen = (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h1 className="text-4xl font-bold">Welcome to the YouTube Player</h1>
+      <Input placeholder="Enter video URL" onChange={(e) => setVideoUrl(e.target.value)} />
+      <Button onClick={() => setIsInitialScreen(false)}>Start</Button>
+    </div>
+  );
 
   return (
     <>
@@ -135,6 +156,7 @@ const YoutubePlayer: React.FC = () => {
           </div>
         )}
       </div>
+      {isInitialScreen && initialScreen}
     </>
   );
 };
