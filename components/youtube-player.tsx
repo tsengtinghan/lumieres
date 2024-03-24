@@ -3,6 +3,10 @@ import YouTube, { YouTubeProps } from "react-youtube";
 import test from "@/public/test.json";
 import { Button } from "./ui/button";
 import Video from "./ui/video";
+import {
+    Card,
+    CardContent,
+  } from "@/components/ui/card"
 
 interface Question {
   type: string;
@@ -94,14 +98,13 @@ const YoutubePlayer: React.FC = () => {
 
   return (
     <>
-      <h1>YouTube Player</h1>
       <div>
         <div
           style={{
             maxWidth: "800px",
             margin: "auto",
             marginTop: "12px",
-            minHeight: "30vh",
+            minHeight: "50vh",
             borderRadius: "12px",
             overflow: "hidden",
           }}
@@ -113,25 +116,32 @@ const YoutubePlayer: React.FC = () => {
           />
         </div>
         {showQuestion && (
-          <div className="flex mx-auto">
-            <p>Question: {questions[currentQuestionIndex].question.question}</p>
-            {questions[currentQuestionIndex].question.options && (
-              <div className="flex flex-col space-y-3">
-                Options:{" "}
-                {questions[currentQuestionIndex].question.options?.map(
-                  (item, index) => {
-                    if (item === selectedOption && item !== questions[currentQuestionIndex].question.answer) {
-                      return <Button key={index} onClick={() => handleClick(item)} variant="destructive">{item}</Button>;
+          <div className="flex mx-auto justify-center my-5">
+            <Card className="p-5 bg-center mb-5">
+              <CardContent className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col w-64 h-64">
+                  <p>Question: {questions[currentQuestionIndex].question.question}</p>
+                  <Video videoUrl= {videoUrl}/>
+                </div>
+                {questions[currentQuestionIndex].question.options && (
+                <div className="flex flex-col space-y-3">
+                    Options:{" "}
+                    {questions[currentQuestionIndex].question.options?.map(
+                    (item, index) => {
+                        if (item === selectedOption && item !== questions[currentQuestionIndex].question.answer) {
+                        return <Button key={index} onClick={() => handleClick(item)} variant="destructive">{item}</Button>;
+                        }
+                        else if (item === selectedOption && item === questions[currentQuestionIndex].question.answer) {
+                            return <Button key={index} onClick={() => handleClick(item)} variant="secondary">{item}</Button>;
+                        }
+                        return <Button key={index} onClick={() => handleClick(item)} variant="outline">{item}</Button>;
                     }
-                    else if (item === selectedOption && item === questions[currentQuestionIndex].question.answer) {
-                        return <Button key={index} onClick={() => handleClick(item)} variant="secondary">{item}</Button>;
-                    }
-                    return <Button key={index} onClick={() => handleClick(item)} variant="default">{item}</Button>;
-                  }
+                    )}
+                
+                </div>
                 )}
-              </div>
-            )}
-            <Video videoUrl= {videoUrl}/>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>
