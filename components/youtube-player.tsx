@@ -3,7 +3,6 @@ import YouTube, { YouTubeProps } from "react-youtube";
 import test from "@/public/test.json";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import Video from "./ui/video";
 import { Card, CardContent } from "@/components/ui/card";
 import axios from "axios";
 import { Label } from "./ui/label";
@@ -56,7 +55,8 @@ const YoutubePlayer: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const lastVideo = useRef(false);
   const [cached_urls, setCachedUrls] = useState<CachedGeneration[]>([]);
-
+  const [timeStamps, setTimeStamps] = useState<number[]>([]);
+  
   useEffect(() => {
     fetch(
       "https://raw.githubusercontent.com/ShinnosukeUesaka/lumieres_backend/main/cached_generations.json"
@@ -64,7 +64,6 @@ const YoutubePlayer: React.FC = () => {
     )
       .then((response) => response.json())
       .then((data: { cached_generations: CachedGeneration[] }) => {
-        // Ensure data.cached_generations is an array
         if (Array.isArray(data.cached_generations)) {
           setCachedUrls(data.cached_generations);
         } else {
@@ -92,7 +91,7 @@ const YoutubePlayer: React.FC = () => {
     //{"url":"https://www.youtube.com/watch?v=zjkBMFhNj_g", "max_questions":1}
     axios
       .post(
-        "https://lumieres-backend.onrender.com/demo/create_questions",
+        "https://lumieres-backend.onrender.com/create_questions",
         {
           url: mainVideoUrl,
           max_questions: 1,
@@ -101,7 +100,9 @@ const YoutubePlayer: React.FC = () => {
       )
       .then((response) => {
         console.log(response);
-        setQuestions(response.data.questions); // change back to response.data.questions
+        setQuestions(response.data.questions);
+        setTimeStamps(response.data.timestamps);
+        console.log(response.data.questions);
         setLoadingState("questions_loaded");
         playerRef.current.playVideo();
       })
@@ -133,6 +134,7 @@ const YoutubePlayer: React.FC = () => {
     if (questionIndex >= questions.length) return;
 
     const questionTime = questions[questionIndex]?.timestamp;
+    
     const intervalId = setInterval(() => {
       if (!playerRef.current) return;
       const currentTime = playerRef.current.getCurrentTime();
@@ -279,7 +281,12 @@ const YoutubePlayer: React.FC = () => {
       </div>
     );
   } else if (loadingState === "questions_loaded") {
-    mainComponent = <></>;
+    console.log(questions);
+    // main component is on the back of the youtube video component
+    mainComponent = (
+        <>
+        </>
+      );
   }
   console.log(loadingState);
   console.log(showQuestion);
@@ -358,6 +365,9 @@ const YoutubePlayer: React.FC = () => {
           );
         })}
       </div>
+      {questions.map((item, index) => (
+            <span onClick={()=>{playerRef.current.seekTo(item.timestamp-3)}}>{item.timestamp}</span>
+        ))}
       <div className="absolute top-2 left-0 -mt-16 -ml-16 w-40 h-40 bg-red-500 rounded-full opacity-50 shadow-lg"></div>
       <div className="absolute top-2 left-16 -mt-10 w-20 h-20 bg-orange-400 rounded-full opacity-50 shadow-lg"></div>
       <div className="absolute top-5 left-14 -mt-2 -ml-2 w-20 h-20 bg-yellow-400 rounded-full opacity-50 shadow-lg"></div>
