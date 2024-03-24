@@ -38,7 +38,6 @@ type ButtonVariant =
   | "ghost"
   | null
   | undefined;
-type ButtonVariant = "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
 
 
 const YoutubePlayer: React.FC = () => {
@@ -182,13 +181,13 @@ const YoutubePlayer: React.FC = () => {
 
     mainComponent = (
       <div className="grid grid-cols-2 gap-4 w-full h-full p-10">
-        <div className="flex w-full h-full items-center justify-center ">
-          
-        <iframe 
-                src={videoUrl} 
-                className="w-[250px] h-[250px] rounded-full border-none"
-                allow="autoplay"
-         ></iframe>
+        <div className="flex w-full h-full items-center justify-center">
+          <iframe 
+                  src={videoUrl} 
+                  className="w-[250px] h-[250px] rounded-full border-none"
+                  onEnded={handleVideoEnd}
+                  allow="autoplay"
+          ></iframe>
         </div>
 
           
@@ -241,34 +240,6 @@ const YoutubePlayer: React.FC = () => {
 
       </div>
     );
-              <div className="flex mx-auto justify-center my-5">
-                <Card className="p-5 bg-center mb-5">
-                  <CardContent className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col w-64 h-64">
-                      <p>Question: {questions[currentQuestionIndex].question.question}</p>
-                      <Video videoUrl= {videoUrl} handleVideoEnd={()=>handleVideoEnd()}/>
-                    </div>
-                    {questions[currentQuestionIndex].question.options && (
-                    <div className="flex flex-col space-y-3">
-                        Options:{" "}
-                        {questions[currentQuestionIndex].question.options?.map(
-                        (item, index) => {
-                            if (item === selectedOption && item !== questions[currentQuestionIndex].question.answer) {
-                            return <Button key={index} onClick={() => handleClick(item)} variant="destructive">{item}</Button>;
-                            }
-                            else if (item === selectedOption && item === questions[currentQuestionIndex].question.answer) {
-                                return <Button key={index} onClick={() => handleClick(item)} variant="secondary">{item}</Button>;
-                            }
-                            return <Button key={index} onClick={() => handleClick(item)} variant="outline">{item}</Button>;
-                        }
-                        )}
-                    
-                    </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-            )
   } else if (loadingState === "waiting_for_url") {
     mainComponent = (
       <div className="h-full w-full flex justify-center items-center flex-col">
@@ -359,45 +330,5 @@ const YoutubePlayer: React.FC = () => {
     </div>
   );
 };
-
-//   return (
-//     <>
-//       <h1>YouTube Player</h1>
-//       <div>
-//         {loadingState == "questions_loaded" && youtubeComponent}
-//         {showQuestion && (
-//           <div className="flex mx-auto justify-center my-5">
-//             <Card className="p-5 bg-center mb-5">
-//               <CardContent className="grid grid-cols-2 gap-4">
-//                 <div className="flex flex-col w-64 h-64">
-//                   <p>Question: {questions[currentQuestionIndex].question.question}</p>
-//                   <Video videoUrl= {videoUrl}/>
-//                 </div>
-//                 {questions[currentQuestionIndex].question.options && (
-//                 <div className="flex flex-col space-y-3">
-//                     Options:{" "}
-//                     {questions[currentQuestionIndex].question.options?.map(
-//                     (item, index) => {
-//                         if (item === selectedOption && item !== questions[currentQuestionIndex].question.answer) {
-//                         return <Button key={index} onClick={() => handleClick(item)} variant="destructive">{item}</Button>;
-//                         }
-//                         else if (item === selectedOption && item === questions[currentQuestionIndex].question.answer) {
-//                             return <Button key={index} onClick={() => handleClick(item)} variant="secondary">{item}</Button>;
-//                         }
-//                         return <Button key={index} onClick={() => handleClick(item)} variant="outline">{item}</Button>;
-//                     }
-//                     )}
-
-//                 </div>
-//                 )}
-//               </CardContent>
-//             </Card>
-//           </div>
-//         )}
-//       </div>
-//       {loadingState == "waiting_for_url" && initialScreen}
-//     </>
-//   );
-// };
 
 export default YoutubePlayer;
