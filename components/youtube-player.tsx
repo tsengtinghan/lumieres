@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, use } from "react";
 import YouTube, { YouTubeProps } from "react-youtube";
 import test from "@/public/test.json";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import Video from "./ui/video";
 import {
     Card,
@@ -23,14 +24,20 @@ interface QuestionList {
   question: Question;
 }
 
+function getIdfromUrl(url: string) : string | null{
+  const urlParams = new URLSearchParams(url.split('?')[1]);
+  return urlParams.get('v');
+}
+
 type ButtonVariant = "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
 
 const YoutubePlayer: React.FC = () => {
   const [questions, setQuestions] = useState<QuestionList[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showQuestion, setShowQuestion] = useState(false);
+  const [isInitialScreen, setIsInitialScreen] = useState(true);
+  const [videoUrl, setVideoUrl] = useState<string>("");
   const playerRef = useRef<any>(null);
-  const [videoUrl, setVideoUrl] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
 
   const opts = {
@@ -41,6 +48,10 @@ const YoutubePlayer: React.FC = () => {
 
   const questionList: QuestionList[] = test;
 
+  const startVideo = () => {
+    setIsInitialScreen(false);
+  }
+  
   useEffect(() => {
     setQuestions(questionList);
   }, []);
@@ -75,6 +86,9 @@ const YoutubePlayer: React.FC = () => {
     }, 500);
     return () => clearInterval(intervalId);
   };
+  
+  
+  
 
   useEffect(() => {
     if (showQuestion) {
@@ -95,26 +109,43 @@ const YoutubePlayer: React.FC = () => {
     // setShowQuestion(false);
     // playerRef.current.playVideo();
   };
+  
+  const initialScreen = (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h1 className="text-4xl font-bold">Welcome to the YouTube Player</h1>
+      <Input placeholder="Enter video URL" onChange={(e) => setVideoUrl(e.target.value)} />
+      <Button onClick={() => setIsInitialScreen(false)}>Start</Button>
+    </div>
+  );
+  
+  
+  console.log(getIdfromUrl(videoUrl));
+  console.log(videoUrl);
+  const youtubeComponent = (
+    <div
+    style={{
+      maxWidth: "800px",
+      margin: "auto",
+      marginTop: "12px",
+      minHeight: "30vh",
+      borderRadius: "12px",
+      overflow: "hidden",
+    }}
+  >
+    
+    <YouTube
+      videoId={getIdfromUrl(videoUrl) as string} // video id
+      opts={opts}
+      onStateChange={videoStateChange}
+    />
+  </div>
+  );
 
   return (
     <>
+      <h1>YouTube Player</h1>
       <div>
-        <div
-          style={{
-            maxWidth: "800px",
-            margin: "auto",
-            marginTop: "12px",
-            minHeight: "50vh",
-            borderRadius: "12px",
-            overflow: "hidden",
-          }}
-        >
-          <YouTube
-            videoId="zjkBMFhNj_g" // video id
-            opts={opts}
-            onStateChange={videoStateChange}
-          />
-        </div>
+        {!isInitialScreen && youtubeComponent}
         {showQuestion && (
           <div className="flex mx-auto justify-center my-5">
             <Card className="p-5 bg-center mb-5">
@@ -145,6 +176,7 @@ const YoutubePlayer: React.FC = () => {
           </div>
         )}
       </div>
+      {isInitialScreen && initialScreen}
     </>
   );
 };
