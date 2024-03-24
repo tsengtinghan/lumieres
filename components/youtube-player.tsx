@@ -1,23 +1,23 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, use } from "react";
 import YouTube, { YouTubeProps } from "react-youtube";
 import test from "@/public/test.json";
 import { Button } from "./ui/button";
+import Video from "./ui/video";
 
 interface Question {
   type: string;
   question: string;
-  options?: string[];
-  answer?: string;
-  question_video_url?: string;
-  wrong_answer_video_url?: string;
-  correct_answer_video_url?: string;
+  options: string[];
+  answer: string;
+  question_video_url: string;
+  wrong_answer_video_url: string;
+  correct_answer_video_url: string;
 }
 
 interface QuestionList {
   timestamp: number;
   question: Question;
 }
-
 
 const YoutubePlayer: React.FC = () => {
   const [questions, setQuestions] = useState<QuestionList[]>([]);
@@ -31,12 +31,11 @@ const YoutubePlayer: React.FC = () => {
     playerVars: { autoplay: 1 },
   };
 
-  const questionList: QuestionList[] = test.questions;
+  const questionList: QuestionList[] = test;
 
   useEffect(() => {
     setQuestions(questionList);
   }, []);
-
 
   const findClosestQuestion = (currentTime: number) => {
     return questions.findIndex((question) => question.timestamp >= currentTime);
@@ -48,23 +47,23 @@ const YoutubePlayer: React.FC = () => {
   };
 
   const checkForQuestions = () => {
-    setCurrentQuestionIndex(
-      findClosestQuestion(playerRef.current.getCurrentTime())
+    const questionIndex = findClosestQuestion(
+      playerRef.current.getCurrentTime()
     );
-    if (currentQuestionIndex >= questions.length) return;
+    setCurrentQuestionIndex(questionIndex);
 
-    const questionTime = questions[currentQuestionIndex]?.timestamp;
+    if (questionIndex >= questions.length) return;
+
+    const questionTime = questions[questionIndex]?.timestamp;
     const intervalId = setInterval(() => {
       if (!playerRef.current) return;
       const currentTime = playerRef.current.getCurrentTime();
-      if (currentTime >= questionTime) {
+      if (currentTime >= questionTime && currentTime < questionTime + 1) {
         playerRef.current.pauseVideo();
         setShowQuestion(true);
         clearInterval(intervalId);
       }
-    }, 100);
-
-    // clean up the interval
+    }, 500);
     return () => clearInterval(intervalId);
   };
 
@@ -100,7 +99,7 @@ const YoutubePlayer: React.FC = () => {
           />
         </div>
         {showQuestion && (
-          <div style={{ maxWidth: "800px", margin: "auto", marginTop: "20px" }}>
+          <div className="flex mx-auto">
             <p>Question: {questions[currentQuestionIndex].question.question}</p>
             {questions[currentQuestionIndex].question.options && (
               <div className="flex flex-col space-y-3">
@@ -113,6 +112,7 @@ const YoutubePlayer: React.FC = () => {
               </div>
             )}
             <Button onClick={handleClick}>Next</Button>
+            <Video videoUrl= {questions[currentQuestionIndex].question.question_video_url}/>
           </div>
         )}
       </div>
