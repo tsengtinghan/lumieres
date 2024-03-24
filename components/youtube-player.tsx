@@ -19,11 +19,15 @@ interface QuestionList {
   question: Question;
 }
 
+type ButtonVariant = "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
+
 const YoutubePlayer: React.FC = () => {
   const [questions, setQuestions] = useState<QuestionList[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showQuestion, setShowQuestion] = useState(false);
   const playerRef = useRef<any>(null);
+  const [videoUrl, setVideoUrl] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
 
   const opts = {
     width: "100%",
@@ -60,6 +64,7 @@ const YoutubePlayer: React.FC = () => {
       const currentTime = playerRef.current.getCurrentTime();
       if (currentTime >= questionTime && currentTime < questionTime + 1) {
         playerRef.current.pauseVideo();
+        setVideoUrl(questions[questionIndex].question.question_video_url);
         setShowQuestion(true);
         clearInterval(intervalId);
       }
@@ -73,9 +78,18 @@ const YoutubePlayer: React.FC = () => {
     }
   }, [showQuestion]);
 
-  const handleClick = () => {
-    setShowQuestion(false);
-    playerRef.current.playVideo();
+  const handleClick = (choice:string) => {
+    setSelectedOption(choice);
+    if(choice === questions[currentQuestionIndex].question.answer){
+        setVideoUrl(questions[currentQuestionIndex].question.correct_answer_video_url);
+        setSelectedOption(choice);
+    }
+    else{
+        setVideoUrl(questions[currentQuestionIndex].question.wrong_answer_video_url);
+        setSelectedOption(choice);
+    }
+    // setShowQuestion(false);
+    // playerRef.current.playVideo();
   };
 
   return (
@@ -106,13 +120,18 @@ const YoutubePlayer: React.FC = () => {
                 Options:{" "}
                 {questions[currentQuestionIndex].question.options?.map(
                   (item, index) => {
-                    return <span key={index}>{item}</span>;
+                    if (item === selectedOption && item !== questions[currentQuestionIndex].question.answer) {
+                      return <Button key={index} onClick={() => handleClick(item)} variant="destructive">{item}</Button>;
+                    }
+                    else if (item === selectedOption && item === questions[currentQuestionIndex].question.answer) {
+                        return <Button key={index} onClick={() => handleClick(item)} variant="secondary">{item}</Button>;
+                    }
+                    return <Button key={index} onClick={() => handleClick(item)} variant="default">{item}</Button>;
                   }
                 )}
               </div>
             )}
-            <Button onClick={handleClick}>Next</Button>
-            <Video videoUrl= {questions[currentQuestionIndex].question.question_video_url}/>
+            <Video videoUrl= {videoUrl}/>
           </div>
         )}
       </div>
