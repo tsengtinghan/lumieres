@@ -4,10 +4,7 @@ import test from "@/public/test.json";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import Video from "./ui/video";
-import {
-    Card,
-    CardContent,
-  } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card";
 import axios from "axios";
 import { Label } from "./ui/label";
 import { lstat } from "fs";
@@ -27,11 +24,20 @@ interface QuestionList {
   question: Question;
 }
 
-function getIdfromUrl(url: string) : string | null{
-  const urlParams = new URLSearchParams(url.split('?')[1]);
-  return urlParams.get('v');
+function getIdfromUrl(url: string): string | null {
+  const urlParams = new URLSearchParams(url.split("?")[1]);
+  return urlParams.get("v");
 }
 
+type ButtonVariant =
+  | "link"
+  | "default"
+  | "destructive"
+  | "outline"
+  | "secondary"
+  | "ghost"
+  | null
+  | undefined;
 type ButtonVariant = "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
 
 
@@ -56,26 +62,30 @@ const YoutubePlayer: React.FC = () => {
   const questionList: QuestionList[] = test;
 
   const startVideo = () => {
-    loadingState === "waiting_for_url" && setLoadingState("waiting_for_backend");
+    loadingState === "waiting_for_url" &&
+      setLoadingState("waiting_for_backend");
     // POST
     // https://lumieres-backend.onrender.com/create_questions
     //{"url":"https://www.youtube.com/watch?v=zjkBMFhNj_g", "max_questions":1}
-    axios.post("https://lumieres-backend.onrender.com/demo/create_questions", {
-      url: mainVideoUrl,
-      max_questions: 1,
-    }).then((response) => {
-      console.log(response);
-      setQuestions(questionList); // change back to response.data.questions
-      setLoadingState("questions_loaded");
-    }).catch((error) => {
-      console.log(error);
-      setLoadingState("questions_loaded");
-    });
-  }
-  
-//   useEffect(() => {
-//     setQuestions(questionList);
-//   }, []);
+    axios
+      .post("https://lumieres-backend.onrender.com/demo/create_questions", {
+        url: mainVideoUrl,
+        max_questions: 1,
+      })
+      .then((response) => {
+        console.log(response);
+        setQuestions(response.data.questions); // change back to response.data.questions
+        setLoadingState("questions_loaded");
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoadingState("questions_loaded");
+      });
+  };
+
+  //   useEffect(() => {
+  //     setQuestions(questionList);
+  //   }, []);
 
   const findClosestQuestion = (currentTime: number) => {
     return questions.findIndex((question) => question.timestamp >= currentTime);
@@ -108,9 +118,6 @@ const YoutubePlayer: React.FC = () => {
     }, 500);
     return () => clearInterval(intervalId);
   };
-  
-  
-  
 
   useEffect(() => {
     if (showQuestion) {
@@ -118,16 +125,19 @@ const YoutubePlayer: React.FC = () => {
     }
   }, [showQuestion]);
 
-  const handleClick = (choice:string) => {
+  const handleClick = (choice: string) => {
     setSelectedOption(choice);
-    if(choice === questions[currentQuestionIndex].question.answer){
-        setVideoUrl(questions[currentQuestionIndex].question.correct_answer_video_url);
-        setSelectedOption(choice);
+    if (choice === questions[currentQuestionIndex].question.answer) {
+      setVideoUrl(
+        questions[currentQuestionIndex].question.correct_answer_video_url
+      );
+      setSelectedOption(choice);
         lastVideo.current = true;
-    }
-    else{
-        setVideoUrl(questions[currentQuestionIndex].question.wrong_answer_video_url);
-        setSelectedOption(choice);
+    } else {
+      setVideoUrl(
+        questions[currentQuestionIndex].question.wrong_answer_video_url
+      );
+      setSelectedOption(choice);
         console.log(lastVideo);
         lastVideo.current = true;
         console.log(lastVideo);
@@ -135,21 +145,23 @@ const YoutubePlayer: React.FC = () => {
     // setShowQuestion(false);
     // playerRef.current.playVideo();
   };
-  
+
   const initialScreen = (
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-4xl font-bold">Welcome to the YouTube Player</h1>
-      <Input placeholder="Enter video URL" onChange={(e) => setMainVideoUrl(e.target.value)} />
+      <Input
+        placeholder="Enter video URL"
+        onChange={(e) => setMainVideoUrl(e.target.value)}
+      />
       <Button onClick={startVideo}>Start</Button>
     </div>
   );
-  
+
   const loadingScreen = (
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-4xl font-bold">Loading...</h1>
     </div>
   );
-  
   const handleVideoEnd = () => {    
     console.log("Video Ended");
     console.log(lastVideo.current);
@@ -167,7 +179,68 @@ const YoutubePlayer: React.FC = () => {
 
   let mainComponent;
   if (showQuestion) {
+
     mainComponent = (
+      <div className="grid grid-cols-2 gap-4 w-full h-full p-10">
+        <div className="flex w-full h-full items-center justify-center ">
+          
+        <iframe 
+                src={videoUrl} 
+                className="w-[250px] h-[250px] rounded-full border-none"
+                allow="autoplay"
+         ></iframe>
+        </div>
+
+          
+          <div className="flex flex-col space-y-3 justify-center p-4 h-full">
+            <h1 className="text-xl mb-3">{questions[currentQuestionIndex].question.question}</h1>
+            {questions[currentQuestionIndex].question.options?.map(
+              (item, index) => {
+                if (
+                  item === selectedOption &&
+                  item !== questions[currentQuestionIndex].question.answer
+                ) {
+                  return (
+                    <Button
+                      key={index}
+                      onClick={() => handleClick(item)}
+                      variant="destructive"
+                      className="!text-left justify-start text-lg h-16"
+                    >
+                      {item}
+                    </Button>
+                  );
+                } else if (
+                  item === selectedOption &&
+                  item === questions[currentQuestionIndex].question.answer
+                ) {
+                  return (
+                    <Button
+                      key={index}
+                      onClick={() => handleClick(item)}
+                      variant="secondary"
+                      className="!text-left justify-start text-lg h-16"
+                    >
+                      {item}
+                    </Button>
+                  );
+                }
+                return (
+                  <Button
+                    key={index}
+                    onClick={() => handleClick(item)}
+                    variant="outline"
+                    className="!text-left justify-start text-lg h-16"
+                  >
+                    {item}
+                  </Button>
+                );
+              }
+            )}
+          </div>
+
+      </div>
+    );
               <div className="flex mx-auto justify-center my-5">
                 <Card className="p-5 bg-center mb-5">
                   <CardContent className="grid grid-cols-2 gap-4">
@@ -197,47 +270,55 @@ const YoutubePlayer: React.FC = () => {
               </div>
             )
   } else if (loadingState === "waiting_for_url") {
-    mainComponent = (<div className="h-full w-full flex justify-center items-center flex-col"><div className="text-5xl text-center align-middle p-12">Slides<br/>LLM</div><div>Please keep your sound on</div></div>);
- 
+    mainComponent = (
+      <div className="h-full w-full flex justify-center items-center flex-col">
+        <div className="text-5xl text-center align-middle p-12">
+          Slides
+          <br />
+          LLM
+        </div>
+        <div>Please keep your sound on</div>
+      </div>
+    );
   } else if (loadingState === "waiting_for_backend") {
     mainComponent = (
       <div className="flex flex-col items-center h-full w-full p-12">
         <div className="w-full h-full">
-      <div className="loader-inner">
-        <div className="loader-line-wrap">
-          <div className="loader-line"></div>
+          <div className="loader-inner">
+            <div className="loader-line-wrap">
+              <div className="loader-line"></div>
+            </div>
+            <div className="loader-line-wrap">
+              <div className="loader-line"></div>
+            </div>
+            <div className="loader-line-wrap">
+              <div className="loader-line"></div>
+            </div>
+            <div className="loader-line-wrap">
+              <div className="loader-line"></div>
+            </div>
+            <div className="loader-line-wrap">
+              <div className="loader-line"></div>
+            </div>
+          </div>
         </div>
-        <div className="loader-line-wrap">
-          <div className="loader-line"></div>
-        </div>
-        <div className="loader-line-wrap">
-          <div className="loader-line"></div>
-        </div>
-        <div className="loader-line-wrap">
-          <div className="loader-line"></div>
-        </div>
-        <div className="loader-line-wrap">
-          <div className="loader-line"></div>
-        </div>
+        <h1 className="bottom-3/4">Generation takes up to 3 minutes.</h1>
       </div>
-    </div>
-    <h1 className="bottom-3/4">
-    Generation takes up to 3 minutes.
-    </h1>
-    
-    </div>
-      
-      )
+    );
   } else if (loadingState === "questions_loaded") {
-    mainComponent = youtubeComponent;
+    mainComponent = (
+      <YouTube
+        videoId={getIdfromUrl(mainVideoUrl) as string} // video id
+        opts={opts}
+        onStateChange={videoStateChange}
+      />
+    );
   }
-  
+
   return (
-    
-    <div className="h-screen w-screen flex flex-col items-center justify-center gap-4 p-2 ">
-        
-      <div className="w-[100%] bg-zinc-100 max-w-screen-lg shadow-3xl rounded-2xl aspect-[16/9] m-12 mb-16">
-          {mainComponent}
+    <div className="h-screen w-screen flex flex-col items-center justify-center gap-4 p-2  bg-orange-100 overflow-visible ">
+      <div className="w-[100%] bg-white max-w-screen-lg shadow-2xl rounded-2xl aspect-[16/9] m-12 mb-16">
+        {mainComponent}
       </div>
       <div className="w-full max-w-lg flex justify-between items-center relative -top-12 gap-4 bg-black rounded-3xl p-2">
         <Label className="sr-only" htmlFor="input-field">
@@ -248,7 +329,6 @@ const YoutubePlayer: React.FC = () => {
           id="input-field"
           placeholder="Enter Link Here"
           onChange={(e) => setMainVideoUrl(e.target.value)}
-          
         />
         <Button
           className="bg-white text-black p-2 rounded-3xl"
@@ -270,8 +350,54 @@ const YoutubePlayer: React.FC = () => {
           </svg>
         </Button>
       </div>
+      <div className="absolute top-2 left-0 -mt-16 -ml-16 w-40 h-40 bg-red-500 rounded-full opacity-50 shadow-lg" ></div>
+      <div className="absolute top-2 left-16 -mt-10 w-20 h-20 bg-orange-400 rounded-full opacity-50 shadow-lg"></div>
+      <div className="absolute top-5 left-14 -mt-2 -ml-2 w-20 h-20 bg-yellow-400 rounded-full opacity-50 shadow-lg"></div>
+      <div className="absolute bottom-10 right-0 -mb-16 -mr-16 w-40 h-40 bg-red-500 rounded-full opacity-50 shadow-lg" ></div>
+      <div className="absolute bottom-2 right-10 -mb-10 ml-5 w-20 h-20 bg-orange-400 rounded-full opacity-50 shadow-lg"></div>
+      <div className="absolute bottom-5 right-14 -mb-2 -mr-2 w-20 h-20 bg-yellow-500 rounded-full opacity-50 shadow-lg"></div>
     </div>
   );
 };
+
+//   return (
+//     <>
+//       <h1>YouTube Player</h1>
+//       <div>
+//         {loadingState == "questions_loaded" && youtubeComponent}
+//         {showQuestion && (
+//           <div className="flex mx-auto justify-center my-5">
+//             <Card className="p-5 bg-center mb-5">
+//               <CardContent className="grid grid-cols-2 gap-4">
+//                 <div className="flex flex-col w-64 h-64">
+//                   <p>Question: {questions[currentQuestionIndex].question.question}</p>
+//                   <Video videoUrl= {videoUrl}/>
+//                 </div>
+//                 {questions[currentQuestionIndex].question.options && (
+//                 <div className="flex flex-col space-y-3">
+//                     Options:{" "}
+//                     {questions[currentQuestionIndex].question.options?.map(
+//                     (item, index) => {
+//                         if (item === selectedOption && item !== questions[currentQuestionIndex].question.answer) {
+//                         return <Button key={index} onClick={() => handleClick(item)} variant="destructive">{item}</Button>;
+//                         }
+//                         else if (item === selectedOption && item === questions[currentQuestionIndex].question.answer) {
+//                             return <Button key={index} onClick={() => handleClick(item)} variant="secondary">{item}</Button>;
+//                         }
+//                         return <Button key={index} onClick={() => handleClick(item)} variant="outline">{item}</Button>;
+//                     }
+//                     )}
+
+//                 </div>
+//                 )}
+//               </CardContent>
+//             </Card>
+//           </div>
+//         )}
+//       </div>
+//       {loadingState == "waiting_for_url" && initialScreen}
+//     </>
+//   );
+// };
 
 export default YoutubePlayer;
