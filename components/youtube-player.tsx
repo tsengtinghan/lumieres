@@ -102,6 +102,7 @@ const YoutubePlayer: React.FC = () => {
       .then((response) => {
         console.log(response);
         setQuestions(response.data.questions); // change back to response.data.questions
+        //setQuestions(questionList);
         setLoadingState("questions_loaded");
         playerRef.current.playVideo();
       })
@@ -179,7 +180,7 @@ const YoutubePlayer: React.FC = () => {
   );
   const handleVideoEnd = () => {
     console.log("Video Ended");
-    console.log(lastVideo.current);
+    console.log();
     if (lastVideo.current) {
       setShowQuestion(false);
       setSelectedOption("");
@@ -188,6 +189,13 @@ const YoutubePlayer: React.FC = () => {
     }
   };
 
+  const handleAnswerSubmit = () => {
+    setShowQuestion(false);
+    setSelectedOption("");
+    lastVideo.current = false;
+    playerRef.current.playVideo();
+  }
+  
   const youtubeComponent = (
     <YouTube
       videoId={getIdfromUrl(mainVideoUrl) as string} // video id
@@ -195,20 +203,14 @@ const YoutubePlayer: React.FC = () => {
       onStateChange={videoStateChange}
     />
   );
-
+  console.log(questions);
   let mainComponent;
   if (showQuestion) {
-    mainComponent = (
-      <div className="grid grid-cols-2 gap-4 w-full h-full p-10">
-        <div className="flex w-full h-full items-center justify-center">
-          <video
-            src={videoUrl}
-            className="w-[250px] h-[250px] rounded-full border-none"
-            onEnded={handleVideoEnd}
-            autoPlay
-          />
-        </div>
-
+    
+    let questionComponent; 
+    
+    if (questions[currentQuestionIndex].question.type === "multiple_choice") {
+      questionComponent = (
         <div className="flex flex-col space-y-3 justify-center p-4 h-full">
           <h1 className="text-xl mb-3">
             {questions[currentQuestionIndex].question.question}
@@ -257,6 +259,40 @@ const YoutubePlayer: React.FC = () => {
             }
           )}
         </div>
+      );
+    } else {
+      questionComponent = (
+        <div className="flex flex-col space-y-3 justify-center p-4 h-full">
+          <h1 className="text-xl mb-3">
+            {questions[currentQuestionIndex].question.question}
+          </h1>
+          <Input
+            className="!text-left justify-start text-lg h-16"
+            placeholder="Enter your answer here"
+          />
+          <Button
+            onClick={() => handleAnswerSubmit()}
+            variant="outline"
+            className="!text-left justify-start text-lg h-16"
+          >
+            Submit
+          </Button>
+        </div>
+      );
+    }
+    
+    mainComponent = (
+      <div className="grid grid-cols-2 gap-4 w-full h-full p-10">
+        <div className="flex w-full h-full items-center justify-center">
+          <video
+            src={videoUrl}
+            className="w-[250px] h-[250px] rounded-full border-none"
+            onEnded={handleVideoEnd}
+            autoPlay
+          />
+        </div>
+
+        {questionComponent}
       </div>
     );
   } else if (loadingState === "waiting_for_url") {
