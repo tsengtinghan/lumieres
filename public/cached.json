@@ -74,27 +74,17 @@
         },
         {
             "title": "Mark Zuckerberg YC talk",
-            "url": "https://www.youtube.com/watch?v=JhgQvZ8tH6w",
+            "url": "https://www.youtube.com/watch?v=MGsalg2f9js",
             "questions": [
                 {
                     "question": {
-                        "type": "multiple_choice",
-                        "question": "What was the first project Mark Zuckerberg built at Harvard that involved connecting people?",
-                        "options": [
-                            "Focus on building a great product",
-                            "Raise as much money as possible",
-                            "Hire the best engineers",
-                            "Spend a lot on marketing"
-                        ],
-                        "answer": "Focus on building a great product",
-                        "question_script": "What is the main piece of advice Mark Zuckerberg gives to startup founders?",
-                        "correct_answer_script": "Correct! Mark Zuckerberg's main piece of advice to startup founders is to focus on building a great product. He emphasizes the importance of creating something that people love and find valuable.",
-                        "incorrect_answer_script": "Actually, Mark Zuckerberg's main piece of advice to startup founders is to focus on building a great product. He emphasizes the importance of creating something that people love and find valuable, rather than focusing on raising money, hiring engineers, or spending on marketing.",
-                        "question_video_url": "https://replicate.delivery/pbxt/GUUgyIieOoRMXKNEjDXJ63yrlt2K9AMj84G6TNhb4y4jSxRJA/out.mp4",
-                        "correct_answer_video_url": "https://replicate.delivery/pbxt/ZrWyTal4RWpqAFrLYUErDcND4KXcp4J8JpnP5bQ4rhgdL4oE/out.mp4",
-                        "wrong_answer_video_url": "https://replicate.delivery/pbxt/y005lk32lv6GJN9RCpBpum6dELe3JnqlzNJAJSn1wriCXwRJA/out.mp4"
+                        "type": "free_answer",
+                        "question": "What was the focus of Facebook that helped it win against competing services at other universities?",
+                        "question_script": "What was the focus of Facebook that helped it win against competing services at other universities?",
+                        "question_video_url": "https://replicate.delivery/pbxt/GUUgyIieOoRMXKNEjDXJ63yrlt2K9AMj84G6TNhb4y4jSxRJA/out.mp4"
+        
                     },
-                    "timestamp": 46.099998474121094
+                    "timestamp": 505.9800109863281
                 }
             ]
         }

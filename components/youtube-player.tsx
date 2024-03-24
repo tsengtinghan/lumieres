@@ -80,7 +80,7 @@ const YoutubePlayer: React.FC = () => {
     playerVars: { autoplay: 1 },
   };
 
-  const questionList: QuestionList[] = test;
+  // const questionList: QuestionList[] = test;
 
   const startVideo = (url: string) => {
     console.log("the main video url is...")
