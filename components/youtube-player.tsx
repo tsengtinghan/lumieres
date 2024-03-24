@@ -10,6 +10,7 @@ import {
   } from "@/components/ui/card"
 import axios from "axios";
 import { Label } from "./ui/label";
+import { lstat } from "fs";
 
 interface Question {
   type: string;
@@ -33,6 +34,7 @@ function getIdfromUrl(url: string) : string | null{
 
 type ButtonVariant = "link" | "default" | "destructive" | "outline" | "secondary" | "ghost" | null | undefined;
 
+
 const YoutubePlayer: React.FC = () => {
   const [questions, setQuestions] = useState<QuestionList[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -42,6 +44,7 @@ const YoutubePlayer: React.FC = () => {
   const [videoUrl, setVideoUrl] = useState<string>("");
   const playerRef = useRef<any>(null);
   const [selectedOption, setSelectedOption] = useState("");
+  const lastVideo = useRef(false);
   
   const opts = {
     width: "100%",
@@ -120,10 +123,14 @@ const YoutubePlayer: React.FC = () => {
     if(choice === questions[currentQuestionIndex].question.answer){
         setVideoUrl(questions[currentQuestionIndex].question.correct_answer_video_url);
         setSelectedOption(choice);
+        lastVideo.current = true;
     }
     else{
         setVideoUrl(questions[currentQuestionIndex].question.wrong_answer_video_url);
         setSelectedOption(choice);
+        console.log(lastVideo);
+        lastVideo.current = true;
+        console.log(lastVideo);
     }
     // setShowQuestion(false);
     // playerRef.current.playVideo();
@@ -143,6 +150,20 @@ const YoutubePlayer: React.FC = () => {
     </div>
   );
   
+  const handleVideoEnd = () => {    
+    console.log("Video Ended");
+    console.log(lastVideo.current);
+    if(lastVideo.current){
+        setShowQuestion(false);
+        playerRef.current.playVideo();
+        lastVideo.current = false;
+    }
+  }
+
+  const youtubeComponent = (<YouTube
+    videoId={getIdfromUrl(mainVideoUrl) as string} // video id
+    opts={opts}
+    onStateChange={videoStateChange}/>);
 
   let mainComponent;
   if (showQuestion) {
@@ -152,7 +173,7 @@ const YoutubePlayer: React.FC = () => {
                   <CardContent className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col w-64 h-64">
                       <p>Question: {questions[currentQuestionIndex].question.question}</p>
-                      <Video videoUrl= {videoUrl}/>
+                      <Video videoUrl= {videoUrl} handleVideoEnd={()=>handleVideoEnd()}/>
                     </div>
                     {questions[currentQuestionIndex].question.options && (
                     <div className="flex flex-col space-y-3">
@@ -208,14 +229,13 @@ const YoutubePlayer: React.FC = () => {
       
       )
   } else if (loadingState === "questions_loaded") {
-    mainComponent = (<YouTube
-    videoId={getIdfromUrl(mainVideoUrl) as string} // video id
-    opts={opts}
-    onStateChange={videoStateChange}/>);
+    mainComponent = youtubeComponent;
   }
   
   return (
+    
     <div className="h-screen w-screen flex flex-col items-center justify-center gap-4 p-2 ">
+        
       <div className="w-[100%] bg-zinc-100 max-w-screen-lg shadow-3xl rounded-2xl aspect-[16/9] m-12 mb-16">
           {mainComponent}
       </div>
@@ -253,45 +273,5 @@ const YoutubePlayer: React.FC = () => {
     </div>
   );
 };
-  
-//   return (
-//     <>
-//       <h1>YouTube Player</h1>
-//       <div>
-//         {loadingState == "questions_loaded" && youtubeComponent}
-//         {showQuestion && (
-//           <div className="flex mx-auto justify-center my-5">
-//             <Card className="p-5 bg-center mb-5">
-//               <CardContent className="grid grid-cols-2 gap-4">
-//                 <div className="flex flex-col w-64 h-64">
-//                   <p>Question: {questions[currentQuestionIndex].question.question}</p>
-//                   <Video videoUrl= {videoUrl}/>
-//                 </div>
-//                 {questions[currentQuestionIndex].question.options && (
-//                 <div className="flex flex-col space-y-3">
-//                     Options:{" "}
-//                     {questions[currentQuestionIndex].question.options?.map(
-//                     (item, index) => {
-//                         if (item === selectedOption && item !== questions[currentQuestionIndex].question.answer) {
-//                         return <Button key={index} onClick={() => handleClick(item)} variant="destructive">{item}</Button>;
-//                         }
-//                         else if (item === selectedOption && item === questions[currentQuestionIndex].question.answer) {
-//                             return <Button key={index} onClick={() => handleClick(item)} variant="secondary">{item}</Button>;
-//                         }
-//                         return <Button key={index} onClick={() => handleClick(item)} variant="outline">{item}</Button>;
-//                     }
-//                     )}
-                
-//                 </div>
-//                 )}
-//               </CardContent>
-//             </Card>
-//           </div>
-//         )}
-//       </div>
-//       {loadingState == "waiting_for_url" && initialScreen}
-//     </>
-//   );
-// };
 
 export default YoutubePlayer;
