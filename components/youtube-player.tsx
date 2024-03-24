@@ -37,10 +37,11 @@ const YoutubePlayer: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showQuestion, setShowQuestion] = useState(false);
   const [loadingState, setLoadingState] = useState<string>("waiting_for_url");
+  const [mainVideoUrl, setMainVideoUrl] = useState<string>("");
   const [videoUrl, setVideoUrl] = useState<string>("");
   const playerRef = useRef<any>(null);
   const [selectedOption, setSelectedOption] = useState("");
-
+  
   const opts = {
     width: "100%",
     borderRadius: "2rem",
@@ -55,7 +56,7 @@ const YoutubePlayer: React.FC = () => {
     // https://lumieres-backend.onrender.com/create_questions
     //{"url":"https://www.youtube.com/watch?v=zjkBMFhNj_g", "max_questions":1}
     axios.post("https://lumieres-backend.onrender.com/demo/create_questions", {
-      url: videoUrl,
+      url: mainVideoUrl,
       max_questions: 1,
     }).then((response) => {
       console.log(response);
@@ -128,7 +129,7 @@ const YoutubePlayer: React.FC = () => {
   const initialScreen = (
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-4xl font-bold">Welcome to the YouTube Player</h1>
-      <Input placeholder="Enter video URL" onChange={(e) => setVideoUrl(e.target.value)} />
+      <Input placeholder="Enter video URL" onChange={(e) => setMainVideoUrl(e.target.value)} />
       <Button onClick={startVideo}>Start</Button>
     </div>
   );
@@ -150,10 +151,8 @@ const YoutubePlayer: React.FC = () => {
       overflow: "hidden",
     }}
   >
-    
-    
     <YouTube
-      videoId={getIdfromUrl(videoUrl) as string} // video id
+      videoId={getIdfromUrl(mainVideoUrl) as string} // video id
       opts={opts}
       onStateChange={videoStateChange}
     />
