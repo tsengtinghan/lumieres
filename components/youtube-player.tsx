@@ -92,8 +92,8 @@ const YoutubePlayer: React.FC = () => {
     //{"url":"https://www.youtube.com/watch?v=zjkBMFhNj_g", "max_questions":1}
     axios
       .post(
-        //"https://lumieres-backend.onrender.com/create_questions",
-        "http://127.0.0.1:8000/create_questions",
+        "https://lumieres-backend.onrender.com/create_questions",
+        //"http://127.0.0.1:8000/create_questions",
         {
           url: url,
           max_questions: 1,
