@@ -8,6 +8,7 @@ import {
     Card,
     CardContent,
   } from "@/components/ui/card"
+import axios from "axios";
 
 interface Question {
   type: string;
@@ -35,7 +36,7 @@ const YoutubePlayer: React.FC = () => {
   const [questions, setQuestions] = useState<QuestionList[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showQuestion, setShowQuestion] = useState(false);
-  const [isInitialScreen, setIsInitialScreen] = useState(true);
+  const [loadingState, setLoadingState] = useState<string>("waiting_for_url");
   const [videoUrl, setVideoUrl] = useState<string>("");
   const playerRef = useRef<any>(null);
   const [selectedOption, setSelectedOption] = useState("");
@@ -49,7 +50,21 @@ const YoutubePlayer: React.FC = () => {
   const questionList: QuestionList[] = test;
 
   const startVideo = () => {
-    setIsInitialScreen(false);
+    loadingState === "waiting_for_url" && setLoadingState("waiting_for_backend");
+    // POST
+    // https://lumieres-backend.onrender.com/create_questions
+    //{"url":"https://www.youtube.com/watch?v=zjkBMFhNj_g", "max_questions":1}
+    axios.post("https://lumieres-backend.onrender.com/demo/create_questions", {
+      url: videoUrl,
+      max_questions: 1,
+    }).then((response) => {
+      console.log(response);
+      setQuestions(response.data.questions);
+      setLoadingState("questions_loaded");
+    }).catch((error) => {
+      console.log(error);
+      setLoadingState("questions_loaded");
+    });
   }
   
   useEffect(() => {
@@ -114,13 +129,16 @@ const YoutubePlayer: React.FC = () => {
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-4xl font-bold">Welcome to the YouTube Player</h1>
       <Input placeholder="Enter video URL" onChange={(e) => setVideoUrl(e.target.value)} />
-      <Button onClick={() => setIsInitialScreen(false)}>Start</Button>
+      <Button onClick={startVideo}>Start</Button>
     </div>
   );
   
+  const loadingScreen = (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h1 className="text-4xl font-bold">Loading...</h1>
+    </div>
+  );
   
-  console.log(getIdfromUrl(videoUrl));
-  console.log(videoUrl);
   const youtubeComponent = (
     <div
     style={{
@@ -132,6 +150,7 @@ const YoutubePlayer: React.FC = () => {
       overflow: "hidden",
     }}
   >
+    
     
     <YouTube
       videoId={getIdfromUrl(videoUrl) as string} // video id
@@ -145,7 +164,7 @@ const YoutubePlayer: React.FC = () => {
     <>
       <h1>YouTube Player</h1>
       <div>
-        {!isInitialScreen && youtubeComponent}
+        {loadingState == "questions_loaded" && youtubeComponent}
         {showQuestion && (
           <div className="flex mx-auto justify-center my-5">
             <Card className="p-5 bg-center mb-5">
@@ -176,7 +195,7 @@ const YoutubePlayer: React.FC = () => {
           </div>
         )}
       </div>
-      {isInitialScreen && initialScreen}
+      {loadingState == "waiting_for_url" && initialScreen}
     </>
   );
 };
