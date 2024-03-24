@@ -55,7 +55,6 @@ const YoutubePlayer: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const lastVideo = useRef(false);
   const [cached_urls, setCachedUrls] = useState<CachedGeneration[]>([]);
-  const [timeStamps, setTimeStamps] = useState<number[]>([]);
   
   useEffect(() => {
     fetch(
@@ -83,7 +82,9 @@ const YoutubePlayer: React.FC = () => {
 
   const questionList: QuestionList[] = test;
 
-  const startVideo = () => {
+  const startVideo = (url: string) => {
+    console.log("the main video url is...")
+    console.log(url);
     loadingState === "waiting_for_url" &&
       setLoadingState("waiting_for_backend");
     // POST
@@ -91,17 +92,18 @@ const YoutubePlayer: React.FC = () => {
     //{"url":"https://www.youtube.com/watch?v=zjkBMFhNj_g", "max_questions":1}
     axios
       .post(
-        "https://lumieres-backend.onrender.com/create_questions",
+        //"https://lumieres-backend.onrender.com/create_questions",
+        "http://127.0.0.1:8000/create_questions",
         {
-          url: mainVideoUrl,
+          url: url,
           max_questions: 1,
         },
         { timeout: 600000 }
       )
       .then((response) => {
+        console.log("fetched")
         console.log(response);
         setQuestions(response.data.questions);
-        setTimeStamps(response.data.timestamps);
         console.log(response.data.questions);
         setLoadingState("questions_loaded");
         playerRef.current.playVideo();
@@ -366,7 +368,7 @@ const YoutubePlayer: React.FC = () => {
           />
           <Button
             className="bg-white text-black p-2 rounded-3xl"
-            onClick={startVideo}
+            onClick={() => startVideo(mainVideoUrl)}
           >
             <svg
               className="h-6 w-6"
@@ -391,7 +393,7 @@ const YoutubePlayer: React.FC = () => {
               key={item.url}
               onClick={() => {
                 setMainVideoUrl(item.url);
-                startVideo();
+                startVideo(item.url);
               }}
               className="rounded-3xl m-3"
               variant={"outline"}
