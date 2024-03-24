@@ -50,28 +50,35 @@ const YoutubePlayer: React.FC = () => {
   const playerRef = useRef<any>(null);
   const [selectedOption, setSelectedOption] = useState("");
   const lastVideo = useRef(false);
+  const cached_urls = [
+    'https://www.youtube.com/watch?v=5qap5aO4i9A', 'https://www.youtube.com/watch?v=zjkBMFhNj_g&t=758s'
+  ]
   
   const opts = {
     width: "100%",
     height: "570px",
     borderRadius: "2rem",
     start: 0,
-    //playerVars: { autoplay: 1 },
+    playerVars: { autoplay: 1 },
   };
 
   const questionList: QuestionList[] = test;
 
   const startVideo = () => {
-    loadingState === "waiting_for_url" &&
+    loadingState === ("waiting_for_url") &&
       setLoadingState("waiting_for_backend");
     // POST
     // https://lumieres-backend.onrender.com/create_questions
     //{"url":"https://www.youtube.com/watch?v=zjkBMFhNj_g", "max_questions":1}
     axios
-      .post("https://lumieres-backend.onrender.com/demo/create_questions", {
-        url: mainVideoUrl,
-        max_questions: 1,
-      })
+    .post(
+        "https://lumieres-backend.onrender.com/demo/create_questions",
+        {
+          url: mainVideoUrl,
+          max_questions: 1,
+        },
+        { timeout: 600000 } 
+      )
       .then((response) => {
         console.log(response);
         setQuestions(response.data.questions); // change back to response.data.questions
@@ -145,16 +152,6 @@ const YoutubePlayer: React.FC = () => {
     // playerRef.current.playVideo();
   };
 
-  const initialScreen = (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-4xl font-bold">Welcome to the YouTube Player</h1>
-      <Input
-        placeholder="Enter video URL"
-        onChange={(e) => setMainVideoUrl(e.target.value)}
-      />
-      <Button onClick={startVideo}>Start</Button>
-    </div>
-  );
 
   const loadingScreen = (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -245,9 +242,7 @@ const YoutubePlayer: React.FC = () => {
     mainComponent = (
       <div className="h-full w-full flex justify-center items-center flex-col">
         <div className="text-5xl text-center align-middle p-12">
-          Slides
-          <br />
-          LLM
+          Lumiere
         </div>
         <div>Please keep your sound on</div>
       </div>
@@ -300,6 +295,18 @@ const YoutubePlayer: React.FC = () => {
         </div>
       </div>
       <div className={"w-full max-w-lg flex justify-between items-center relative -top-12 gap-4 bg-black rounded-3xl p-2 " + ( loadingState === "waiting_for_url" ? 'visible' : 'invisible' )}>
+        {cached_urls.map((url) => {
+            return (
+            <Button
+                onClick={() => {
+                setMainVideoUrl(url);
+                startVideo();
+                }}
+            >
+                {url}
+            </Button>
+            );
+        })}
         <Label className="sr-only" htmlFor="input-field">
           Input Field
         </Label>
