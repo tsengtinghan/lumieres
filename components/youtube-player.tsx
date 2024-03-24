@@ -1,15 +1,83 @@
-'use client';
-import React from "react";
-import YouTube, { YouTubeProps } from 'react-youtube';
+import React, { useEffect, useState, useRef } from "react";
+import YouTube, { YouTubeProps } from "react-youtube";
+import test from "@/public/test.json";
+import { Button } from "./ui/button";
 
-const YoutubePlayer = () => {
+interface Question {
+  type: string;
+  question: string;
+  options?: string[];
+  answer?: string;
+  question_video_url?: string;
+  wrong_answer_video_url?: string;
+  correct_answer_video_url?: string;
+}
+
+interface QuestionList {
+  timestamp: number;
+  question: Question;
+}
+
+
+const YoutubePlayer: React.FC = () => {
+  const [questions, setQuestions] = useState<QuestionList[]>([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [showQuestion, setShowQuestion] = useState(false);
+  const playerRef = useRef<any>(null);
+
   const opts = {
     width: "100%",
     borderRadius: "2rem",
     playerVars: { autoplay: 1 },
   };
-  const videoReady : YouTubeProps['onReady'] = (event) => {
-    event.target.playVideo();
+
+  const questionList: QuestionList[] = test.questions;
+
+  useEffect(() => {
+    setQuestions(questionList);
+  }, []);
+
+
+  const findClosestQuestion = (currentTime: number) => {
+    return questions.findIndex((question) => question.timestamp >= currentTime);
+  };
+
+  const videoStateChange: YouTubeProps["onStateChange"] = (event) => {
+    playerRef.current = event.target;
+    if (event.data === 1) checkForQuestions();
+  };
+
+  const checkForQuestions = () => {
+    setCurrentQuestionIndex(
+      findClosestQuestion(playerRef.current.getCurrentTime())
+    );
+    if (currentQuestionIndex >= questions.length) return;
+
+    const questionTime = questions[currentQuestionIndex]?.timestamp;
+    const intervalId = setInterval(() => {
+      if (!playerRef.current) return;
+      const currentTime = playerRef.current.getCurrentTime();
+      if (currentTime >= questionTime) {
+        playerRef.current.pauseVideo();
+        setShowQuestion(true);
+        clearInterval(intervalId);
+      }
+    }, 1000);
+
+    // clean up the interval
+    return () => clearInterval(intervalId);
+  };
+
+  useEffect(() => {
+    if (showQuestion) {
+      // logic to handle when a question is being shown
+    }
+  }, [showQuestion]);
+
+  const handleClick = () => {
+    setShowQuestion(false);
+    setCurrentQuestionIndex(currentQuestionIndex + 1);
+    playerRef.current.playVideo();
   };
 
   return (
@@ -27,11 +95,27 @@ const YoutubePlayer = () => {
           }}
         >
           <YouTube
-            videoId="2g811Eo7K8U"
+            videoId="zjkBMFhNj_g" // video id
             opts={opts}
-            onReady={videoReady}
+            onStateChange={videoStateChange}
           />
         </div>
+        {showQuestion && (
+          <div style={{ maxWidth: "800px", margin: "auto", marginTop: "20px" }}>
+            <p>Question: {questions[currentQuestionIndex].question.question}</p>
+            {questions[currentQuestionIndex].question.options && (
+              <div className="flex flex-col space-y-3">
+                Options:{" "}
+                {questions[currentQuestionIndex].question.options?.map(
+                  (item, index) => {
+                    return <span key={index}>{item}</span>;
+                  }
+                )}
+              </div>
+            )}
+            <Button onClick={handleClick}>Next</Button>
+          </div>
+        )}
       </div>
     </>
   );
