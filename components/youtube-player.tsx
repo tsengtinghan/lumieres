@@ -53,7 +53,7 @@ const YoutubePlayer: React.FC = () => {
   
   const opts = {
     width: "100%",
-    height: "600px",
+    height: "570px",
     borderRadius: "2rem",
     playerVars: { autoplay: 1 },
   };
@@ -137,9 +137,7 @@ const YoutubePlayer: React.FC = () => {
         questions[currentQuestionIndex].question.wrong_answer_video_url
       );
       setSelectedOption(choice);
-        console.log(lastVideo);
         lastVideo.current = true;
-        console.log(lastVideo);
     }
     // setShowQuestion(false);
     // playerRef.current.playVideo();
@@ -182,12 +180,12 @@ const YoutubePlayer: React.FC = () => {
     mainComponent = (
       <div className="grid grid-cols-2 gap-4 w-full h-full p-10">
         <div className="flex w-full h-full items-center justify-center">
-          <iframe 
+          <video 
                   src={videoUrl} 
                   className="w-[250px] h-[250px] rounded-full border-none"
                   onEnded={handleVideoEnd}
-                  allow="autoplay"
-          ></iframe>
+                  autoPlay
+          />
         </div>
 
           
@@ -278,18 +276,25 @@ const YoutubePlayer: React.FC = () => {
     );
   } else if (loadingState === "questions_loaded") {
     mainComponent = (
-      <YouTube
-        videoId={getIdfromUrl(mainVideoUrl) as string} // video id
-        opts={opts}
-        onStateChange={videoStateChange}
-      />
+      <></>
     );
   }
+  console.log(loadingState)
+  console.log(showQuestion)
 
   return (
     <div className="h-screen w-screen flex flex-col items-center justify-center gap-4 p-2  bg-orange-100 overflow-visible ">
-      <div className="w-[100%] bg-white max-w-screen-lg shadow-2xl rounded-2xl aspect-[16/9] m-12 mb-16">
-        {mainComponent}
+      <div className="w-[100%] bg-white max-w-screen-lg shadow-2xl rounded-2xl aspect-[16/9] m-12 mb-16 flex">
+        <div className={"w-full h-full bg-white " + (loadingState === "questions_loaded" && !showQuestion  ? 'z-0' : 'z-20' )} >
+          {mainComponent}
+        </div>
+        <div className="w-full h-full ml-[-100%] z-10">
+          <YouTube
+          videoId={getIdfromUrl(mainVideoUrl) as string} // video id
+          opts={opts}
+          onStateChange={videoStateChange}
+          />
+        </div>
       </div>
       <div className="w-full max-w-lg flex justify-between items-center relative -top-12 gap-4 bg-black rounded-3xl p-2">
         <Label className="sr-only" htmlFor="input-field">
