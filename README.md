@@ -15,5 +15,5 @@ Make it more general: not only YouTube videos
 Make it into a Chrome Extension
 
 
-![demo](https://www.youtube.com/watch?time_continue=1&v=yZzzmiOm_Jk&embeds_referring_euri=https%3A%2F%2Fdevpost.com%2F&source_ve_path=MjM4NTE&feature=emb_title)
+https://www.youtube.com/watch?time_continue=1&v=yZzzmiOm_Jk&embeds_referring_euri=https%3A%2F%2Fdevpost.com%2F&source_ve_path=MjM4NTE&feature=emb_title
 
