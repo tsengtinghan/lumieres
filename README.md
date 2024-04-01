@@ -1,36 +1,20 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Inspiration
+All of us watched tutorials on YouTube to learn concepts otherwise difficult to understand. But science tells us that watching a video is not enough. How many times have we watched a tutorial convinced that we had understood everything...and then the day after it is all gone. Don't worry, we have a solution for you. Interactive learning (doing not only watching) is the best way, according to recent neuroscientific research, to remember longer and understand deeper the topics studied.
 
-## Getting Started
+## What it does
+Introducing Luminieres, the first assistant built to improve educational videos. The content of many educational videos is top-tier, but only if mixed with practice we will remember and understand at best. With Luminieres, at certain timestamps, the video will be interrupted and an avatar of the speaker will ask you questions regarding what was being explained at that point. Questions can either be with options or free answers. To every answer, correct or incorrect it may be, the user will receive feedback from the speaker.
 
-First, run the development server:
+## How we built it
+Frontend in Next.js
+The video gets transcripted by Whisper AI.
+The transcript is fed to the Large Mistral model through API. The model uses a custom prompt that explains in detail how to build a certain number of questions and the way it should give feedback
+The response is fetched and it is converted into audio format through Eleven Labs.
+This AI-generated audio and the video itself is used by sadtalker API to construct the avatar of the speaker.
+What's next for Lumiere
+Make it more general: not only YouTube videos
+Make it into a Chrome Extension
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+![demo](https://github.com/tsengtinghan/lumieres/assets/78808751/266269a9-ed1e-4f45-bf9c-56c973367371)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
