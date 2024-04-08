@@ -15,3 +15,6 @@ Make it more general: not only YouTube videos
 Make it into a Chrome Extension
 
 https://github.com/tsengtinghan/lumieres/assets/78808751/266269a9-ed1e-4f45-bf9c-56c973367371
+
+https://github.com/tsengtinghan/lumieres/assets/45286939/c25359d2-642a-48e9-8ab9-dd3801a862e0
+
