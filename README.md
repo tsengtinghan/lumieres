@@ -11,8 +11,8 @@ The transcript is fed to the Large Mistral model through API. The model uses a c
 The response is fetched and it is converted into audio format through Eleven Labs.
 This AI-generated audio and the video itself is used by sadtalker API to construct the avatar of the speaker.
 What's next for Lumiere
-Make it more general: not only YouTube videos
-Make it into a Chrome Extension
+- Make it more general: not only YouTube videos
+- Make it into a Chrome Extension
 
 https://github.com/tsengtinghan/lumieres/assets/78808751/266269a9-ed1e-4f45-bf9c-56c973367371
 
